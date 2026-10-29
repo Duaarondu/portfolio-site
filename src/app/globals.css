@@ -1,0 +1,87 @@
+/*
+ * globals.css — the design system.
+ *
+ * LEARNING NOTE: Tailwind CSS v4 is configured right here in CSS (older
+ * versions used a tailwind.config.js file). Every color defined inside
+ * @theme becomes a utility class automatically:
+ *   --color-ink      ->  text-ink, bg-ink, border-ink
+ *   --color-verified ->  text-verified, bg-verified ...
+ *
+ * We point those theme colors at CSS variables (--paper, --ink ...) so
+ * dark mode only has to swap the variables, not every class.
+ */
+@import "tailwindcss";
+
+/* Light palette: cool slate paper, deep ink, accounting green */
+:root {
+  --paper: #edf0f3;
+  --surface: #f8fafb;
+  --ink: #172033;
+  --muted: #566176;
+  --rule: #c7cfd9;
+  --verified: #17775a;
+  --verified-soft: #d6ebe2;
+  --pending: #8a6d1f;
+}
+
+/* Dark palette, used automatically when the visitor's OS is in dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #10151f;
+    --surface: #161d2a;
+    --ink: #e4e9f0;
+    --muted: #97a3b6;
+    --rule: #2b3547;
+    --verified: #52c99e;
+    --verified-soft: #173a30;
+    --pending: #e0b85a;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-verified: var(--verified);
+  --color-verified-soft: var(--verified-soft);
+  --color-pending: var(--pending);
+
+  /* Fonts are self-hosted from npm packages (imported in layout.tsx) */
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+/* Visible keyboard focus everywhere (accessibility) */
+:focus-visible {
+  outline: 2px solid var(--verified);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Turn off smooth scroll and animation for people who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
