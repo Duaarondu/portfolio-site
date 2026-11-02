@@ -84,6 +84,8 @@ const NFL_REPO = "https://github.com/Duaarondu/nfl-agent";
 
 export const profile = {
   name: "Aaron Du",
+  /** The site's real address. Used for link previews, Google and /llms.txt. */
+  siteUrl: "https://duaarondu.com",
   tagline: "Aaron Du, AI and software engineering",
   headline: "Agents that show their work.",
   intro:

@@ -20,12 +20,13 @@ function build() {
   const list = (items: string[]) => items.forEach((i) => lines.push(`- ${i}`));
 
   lines.push(`# ${p.name}`, "");
+  lines.push(`Website: ${p.siteUrl}`, "");
   lines.push(`> ${p.intro}`, "");
   lines.push(`${p.workAuth}. ${p.banner.title}: ${p.banner.line}.`, "");
 
   lines.push("## Links", "");
   list([
-    `[Resume (PDF)](${p.links.resume})`,
+    `[Resume (PDF)](${p.siteUrl}${p.links.resume})`,
     `[GitHub](${p.links.github})`,
     `[LinkedIn](${p.links.linkedin})`,
     `Email: ${p.links.email}`,

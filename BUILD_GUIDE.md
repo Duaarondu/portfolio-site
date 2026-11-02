@@ -403,14 +403,22 @@ Together with Vercel that's the whole loop: push → CI checks it → Vercel dep
 
 ---
 
+### Link previews, Google and your domain
+
+- `src/app/opengraph-image.tsx` draws the picture that shows when your link is shared (1200×630). It's JSX turned into a PNG by `ImageResponse`, built once at build time. To test it, run `npm run dev` and open http://localhost:3000/opengraph-image.
+- `layout.tsx` sets `metadataBase` to `profile.siteUrl` (https://duaarondu.com) plus the title and description used in the preview. Next.js writes all the `og:` and `twitter:` tags for you.
+- `sitemap.ts` and `robots.ts` become `/sitemap.xml` and `/robots.txt` for search engines.
+- LinkedIn caches previews. If you change the image after sharing, paste your URL into linkedin.com/post-inspector to refresh it.
+
+---
+
 ## Stage 9: Make it yours (next exercises)
 
 Ranked from easiest to most valuable:
 
 1. **Add the LIRR screenshot.** Put an image in `public/` and show it with Next's `<Image>` component.
 2. **Add a project page.** Create `src/app/projects/nfl-agent/page.tsx` with a deeper write-up and a demo GIF.
-3. **Add a link-preview image** (what shows when you paste the URL into LinkedIn): see the "Metadata and OG images" guide in the Next.js docs.
-4. **Add analytics** with Vercel Analytics to see who visits.
-5. **Make it AI-native:** add a small "Ask about my projects" chat box using the Vercel AI SDK and an LLM API, answering only from `profile.ts`. That turns the site itself into an AI engineering project you can talk about in interviews.
+3. **Add analytics** with Vercel Analytics to see who visits.
+4. **Make it AI-native:** add a small "Ask about my projects" chat box using the Vercel AI SDK and an LLM API, answering only from `profile.ts`. That turns the site itself into an AI engineering project you can talk about in interviews.
 
 Read the official docs that ship with your install in `node_modules/next/dist/docs/` — they match your exact Next.js version.

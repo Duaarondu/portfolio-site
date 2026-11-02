@@ -15,7 +15,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { profile } from "@/data/profile";
-import { LETTERS, VIEWBOX } from "./Logo";
+import { LETTERS, VIEWBOX } from "@/lib/logo";
 
 export function EndScene() {
   const { endPhoto } = profile;

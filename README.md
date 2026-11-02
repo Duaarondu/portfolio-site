@@ -55,6 +55,9 @@ public/about/                your photos (photo-01.jpg … photo-13.jpg)
 public/Aaron_Du_Resume.pdf   the resume the header button opens
 src/data/profile.ts          every word on the site
 src/app/llms.txt/route.ts    /llms.txt: a Markdown summary of the site for AI tools
+src/app/opengraph-image.tsx  the link-preview picture (LinkedIn, iMessage, Slack...)
+src/app/sitemap.ts, robots.ts /sitemap.xml and /robots.txt for search engines
+src/lib/logo.ts              the AD monogram shapes, shared by the logo, end photo and preview
 tests/                       Vitest tests (GitHub logic + content checks)
 .github/workflows/ci.yml     CI: lint, type check, tests and build on every push
 ```
