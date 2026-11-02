@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest    # GitHub lends you a fresh Linux computer
     steps:
       - uses: actions/checkout@v4      # 1. download your repo onto it
-      - uses: actions/setup-node@v4    # 2. install Node.js 22
+      - uses: actions/setup-node@v7    # 2. install Node.js 22
         with:
           node-version: 22
           cache: npm                   #    and reuse packages between runs
