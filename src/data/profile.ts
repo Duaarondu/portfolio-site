@@ -13,14 +13,16 @@
 
 export type Link = { label: string; href: string };
 
-export type Claim = {
-  /** The number being checked, shown highlighted, e.g. "612" */
-  value: string;
-  /** The sentence around it. Use {value} where the number goes. */
+/** One line in the hero's agent trace. */
+export type TraceStep = {
+  agent: "planner" | "analyst" | "critic";
   text: string;
-  /** Where the number can be verified */
-  source: Link;
+  /** "flag" = the Critic caught something, "pass" = every number traced */
+  tone?: "flag" | "pass";
 };
+
+/** A number shown under the trace, linked to where it can be checked. */
+export type Stat = { value: string; label: string; source: string };
 
 export type Project = {
   slug: string;
@@ -32,6 +34,8 @@ export type Project = {
   summary: string;
   bullets: string[];
   repo: string;
+  /** Optional YouTube link for a demo video */
+  demoUrl?: string;
 };
 
 export type Job = {
@@ -40,6 +44,35 @@ export type Job = {
   location: string;
   dates: string;
   bullets: string[];
+};
+
+export type Photo = {
+  /** Path to a photo in /public, e.g. "/about/photo-01.jpg". Leave empty to show a placeholder. */
+  src: string;
+  /** Describes the photo for screen readers. Write one once you add src. */
+  alt: string;
+};
+
+/** One line of the title card. `indent` = how far in from the left, in % of the width. */
+export type TitleLine = { text: string; indent: number };
+
+/** "Studying" + "Comp Sci @ NYIT": a dim verb and a bright object. */
+export type DoingLine = { verb: string; what: string };
+
+/** A row in the Experience card. */
+export type ExperienceItem = {
+  name: string;
+  role: string;
+  /** Top date on the right (the most recent, e.g. "Present") */
+  end: string;
+  /** Bottom date on the right (when it started). Leave empty if there's only one date. */
+  start: string;
+  /** Initials shown on the tile until you add a logo */
+  initials: string;
+  /** Optional logo image in /public, e.g. "/logos/nyit.png" */
+  logo?: string;
+  /** Optional short bullets shown under the row */
+  details?: string[];
 };
 
 export type ToolGroup = {
@@ -51,40 +84,171 @@ const NFL_REPO = "https://github.com/Duaarondu/nfl-agent";
 
 export const profile = {
   name: "Aaron Du",
-  headline: "I build LLM agents that check their own work.",
+  tagline: "Aaron Du, AI and software engineering",
+  headline: "Agents that show their work.",
   intro:
-    "Computer Science student at NYIT (graduating December 2027) building LLM applications and the backend systems around them. Based on Long Island, looking for Summer 2027 software and AI engineering internships in New York City.",
+    "I'm a Computer Science student at NYIT, concentrating in Artificial Intelligence and graduating in December 2027, who builds LLM systems you can audit: every step logged, every number traced to the query that produced it. Looking for Summer 2027 software and AI engineering internships in New York City.",
   workAuth: "U.S. citizen",
   location: "Mineola, NY",
   links: {
     email: "duaarondu@gmail.com",
     github: "https://github.com/Duaarondu",
     linkedin: "https://www.linkedin.com/in/duaarondu",
+    // Add your handles to show them in the footer marquee, e.g.
+    // x: "https://x.com/yourname", discord: "https://discord.com/users/your-id"
+    x: "",
+    discord: "",
+    // Put your resume PDF in public/ and set this to its path, e.g.
+    // "/Aaron_Du_Resume.pdf". The header's Resume button appears once it's set.
+    resume: "/Aaron_Du_Resume.pdf",
   },
 
-  /** The hero "claim check" panel. Every claim links to evidence. */
-  claims: [
+  /** First item in the footer marquee. */
+  footerLine: "Built in New York",
+  copyrightYear: 2026,
+
+  /**
+   * Scene 1, the title card. Lines are staggered like the reference:
+   * change `indent` (0–40) to move a line left or right.
+   */
+  titleLines: [
+    { text: "Aaron", indent: 12 },
+    { text: "Du", indent: 38 },
+    { text: "Software", indent: 0 },
+    { text: "Engineer", indent: 26 },
+    { text: "Student", indent: 8 },
+  ] satisfies TitleLine[],
+
+  /**
+   * Scene 2, the photo strip. It stays pinned while the photos slide past
+   * and the sentence fills in letter by letter.
+   * Photos live in public/about/. Reorder the list to change their order.
+   */
+  about: {
+    doing: [
+      { verb: "Studying", what: "Comp Sci @ NYIT" },
+      { verb: "Creating", what: "Projects" },
+    ] satisfies DoingLine[],
+    sentence:
+      "You'll find me shipping code, snowboarding, working out, and playing video games.",
+    photos: [
+      { src: "/about/photo-01.jpg", alt: "Rows of red lanterns leading to a shrine gate at night" },
+      { src: "/about/photo-02.jpg", alt: "People walking along the Kamo River in Kyoto on a sunny evening" },
+      { src: "/about/photo-03.jpg", alt: "Crowds on the steps below the Ruins of St. Paul's in Macau at dusk" },
+      { src: "/about/photo-04.jpg", alt: "Willow trees hanging over a canal in Kyoto" },
+      { src: "/about/photo-05.jpg", alt: "Walking through a tunnel of red torii gates at night" },
+      { src: "/about/photo-06.jpg", alt: "A treehouse built into a giant tree above a river, with a tour boat passing" },
+      { src: "/about/photo-07.jpg", alt: "A small waterfall in a green forest garden" },
+      { src: "/about/photo-08.jpg", alt: "Offerings of fruit and food on an altar in front of three statues at a small temple" },
+      { src: "/about/photo-09.jpg", alt: "A covered shopping arcade in Kyoto with hanging shop signs" },
+      { src: "/about/photo-10.jpg", alt: "Farm fields under big white clouds with green mountains behind" },
+      { src: "/about/photo-14.jpg", alt: "Looking down at my snowboard at the top of a ski slope at dusk" },
+      { src: "/about/photo-12.jpg", alt: "A heron standing at the edge of a garden pond" },
+      { src: "/about/photo-13.jpg", alt: "A cyclist on the riverside path beside the Kamo River on a cloudy day" },
+    ] satisfies Photo[],
+  },
+
+  /**
+   * The "Now building" scene.
+   *
+   * Two ways to use it:
+   * 1. BY HAND: fill in `current` with what you're working on. If the project
+   *    has a public repo, put it in `current.repo` ("owner/name") and the
+   *    scene adds its latest commits and last-push time from GitHub.
+   * 2. AUTOMATIC: leave `current.name` empty. The scene shows whichever public
+   *    repo you pushed to most recently (minus `skipRepos`), refreshed hourly.
+   */
+  nowBuilding: {
+    githubUser: "Duaarondu",
+    current: {
+      name: "Wedding Project",
+      description: "",
+      repo: "", // e.g. "Duaarondu/wedding-project" once it's a public repo
+    },
+    // Repos the automatic mode should never pick
+    skipRepos: ["portfolio-site", "neetcode-submissions", "Duaarondu"],
+    commitCount: 5,
+    // Optional line in your own words about what you're working on
+    note: "",
+    // Automatic mode only: shown if GitHub can't be reached
+    fallback: {
+      name: "NFL Fantasy Agent",
+      description:
+        "A multi-agent assistant whose Critic blocks any number it can't trace back to a SQL row.",
+      url: "https://github.com/Duaarondu/nfl-agent",
+    },
+  },
+
+  /** The Experience card */
+  experience: [
     {
-      value: "612",
-      text: "{value} tests in the pytest suite",
-      source: { label: "nfl-agent / tests", href: NFL_REPO },
+      name: "Ultimate Sound DJs",
+      role: "Event Technology Specialist",
+      end: "Present",
+      start: "Aug 2024",
+      initials: "US",
+      details: [
+        "Ran sound, lighting, mics and photo booths at about 200 weddings, sweet 16s and bar/bat mitzvahs.",
+        "Combined a year of about 2,000 venue-referred leads into one workbook and cleaned the data by hand.",
+        "Found the top referring venues, which led to a showcase for venue partners with about 100 attendees.",
+      ],
     },
     {
-      value: "278",
-      text: "{value} distinct live queries, 0 SQL errors",
-      source: { label: "nfl-agent / query sweep", href: NFL_REPO },
+      name: "Open Agent Hackathon",
+      role: "Team Lead, NFL Fantasy Agent",
+      end: "Oct 2026",
+      start: "",
+      initials: "OA",
+      details: [
+        "Led a two-person team and designed the Critic agent that blocks unsourced numbers.",
+      ],
     },
     {
-      value: "13/13",
-      text: "{value} on the H-MEM memory conformance suite",
-      source: { label: "nfl-agent / memory", href: NFL_REPO },
+      name: "NYIT",
+      role: "B.S. Computer Science, AI Concentration",
+      end: "Dec 2027",
+      start: "Expected",
+      initials: "NY",
+      details: [
+        "Coursework: Programming for Artificial Intelligence and Artificial Intelligence I (in progress), Data Structures, Discrete Structures, Database Management, Computer Organization and Architecture, Theory of Computation.",
+      ],
     },
-    {
-      value: "82%",
-      text: "{value} of commits on a two-person team",
-      source: { label: "nfl-agent / contributors", href: NFL_REPO },
-    },
-  ] satisfies Claim[],
+    // `as` (not `satisfies`) so the optional `logo` field is allowed on every row
+  ] as ExperienceItem[],
+
+  /** The last scene before the footer: a photo with the AD logo faded over it. */
+  endPhoto: {
+    src: "/about/photo-11.jpg",
+    alt: "Storm clouds over a wide river in Kyoto",
+  },
+  /** The wide banner card. Add a photo at public/about/banner.jpg and set src. */
+  banner: {
+    src: "/about/photo-13.jpg", // swap in any photo from public/about/
+    alt: "",
+    title: "Summer 2027",
+    line: "Open to software and AI internships in New York City",
+  },
+
+
+  /**
+   * The agent trace in the Projects section: how one answer moves through the NFL Fantasy
+   * Agent. It's an illustration of the flow, so no made-up numbers in it.
+   */
+  trace: [
+    { agent: "planner", text: "chooses the SQL query plans to run" },
+    { agent: "analyst", text: "runs the queries, drafts a verdict" },
+    { agent: "critic", text: "finds a number with no source row", tone: "flag" },
+    { agent: "critic", text: "sends it back: revise (round 1 of 3)", tone: "flag" },
+    { agent: "analyst", text: "revises the draft" },
+    { agent: "critic", text: "every number traced, answer sent", tone: "pass" },
+  ] satisfies TraceStep[],
+
+  /** Real numbers from the NFL Fantasy Agent, shown under the trace. */
+  stats: [
+    { value: "612", label: "pytest tests", source: NFL_REPO },
+    { value: "278 / 0", label: "live queries / SQL errors", source: NFL_REPO },
+    { value: "13/13", label: "memory conformance", source: NFL_REPO },
+  ] satisfies Stat[],
 
   featured: {
     slug: "nfl-agent",
@@ -112,6 +276,11 @@ export const profile = {
       "Shipped with Docker, GitHub Actions CI, timeouts, rule-based fallbacks and JSONL tracing of every step.",
     ],
     repo: NFL_REPO,
+    /**
+     * Paste your YouTube link here (any form works: youtube.com/watch?v=…,
+     * youtu.be/…, or a Shorts link). Leave it empty to show a placeholder.
+     */
+    demoUrl: "https://youtu.be/K_tY7Z2Y3GQ",
   } satisfies Project,
 
   /** The agent loop drawn in the featured project. Order matters. */
@@ -183,10 +352,12 @@ export const profile = {
 
   education: {
     school: "New York Institute of Technology",
-    degree: "B.S. in Computer Science",
+    degree: "B.S. in Computer Science, Concentration in Artificial Intelligence",
     location: "Old Westbury, NY",
     graduation: "Expected December 2027",
     coursework: [
+      "Programming for Artificial Intelligence (in progress)",
+      "Artificial Intelligence I (in progress)",
       "Data Structures",
       "Discrete Structures",
       "Database Management",

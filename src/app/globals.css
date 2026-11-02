@@ -4,54 +4,67 @@
  * LEARNING NOTE: Tailwind CSS v4 is configured right here in CSS (older
  * versions used a tailwind.config.js file). Every color defined inside
  * @theme becomes a utility class automatically:
- *   --color-ink      ->  text-ink, bg-ink, border-ink
- *   --color-verified ->  text-verified, bg-verified ...
+ *   --color-ink    ->  text-ink, bg-ink, border-ink
+ *   --color-accent ->  text-accent, bg-accent ...
  *
- * We point those theme colors at CSS variables (--paper, --ink ...) so
- * dark mode only has to swap the variables, not every class.
+ * The look: near-black like a darkened theater, warm cream type, and one
+ * amber accent. It's dark-only, so there's one palette. To add a light
+ * mode later, redefine these variables inside
+ * @media (prefers-color-scheme: light) { :root { ... } }.
  */
 @import "tailwindcss";
 
-/* Light palette: cool slate paper, deep ink, accounting green */
 :root {
-  --paper: #edf0f3;
-  --surface: #f8fafb;
-  --ink: #172033;
-  --muted: #566176;
-  --rule: #c7cfd9;
-  --verified: #17775a;
-  --verified-soft: #d6ebe2;
-  --pending: #8a6d1f;
-}
-
-/* Dark palette, used automatically when the visitor's OS is in dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #10151f;
-    --surface: #161d2a;
-    --ink: #e4e9f0;
-    --muted: #97a3b6;
-    --rule: #2b3547;
-    --verified: #52c99e;
-    --verified-soft: #173a30;
-    --pending: #e0b85a;
-  }
+  color-scheme: dark;
+  --paper: #111110; /* page background */
+  --surface: #1c1c19; /* cards */
+  --night: #0b0b0a; /* the footer marquee band */
+  --ink: #efe8cf; /* main text, warm cream */
+  --muted: #a29e86; /* secondary text */
+  --step: #858269; /* small labels, step numbers */
+  --dim: #3d3c34; /* text that hasn't "filled in" yet */
+  --rule: #2c2b26; /* borders and dividers */
+  --accent: #f2b544; /* amber: logo, buttons, the Critic agent */
+  --accent-ink: #111110; /* text on amber */
+  --agent: #8fb8ff; /* blue: the Planner and Analyst */
+  --verified: #7be0b0; /* green: "every number traced" */
+  --verified-soft: #1b2e27;
+  --cream: #efe8cf;
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-surface: var(--surface);
+  --color-night: var(--night);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
+  --color-step: var(--step);
+  --color-dim: var(--dim);
   --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-agent: var(--agent);
   --color-verified: var(--verified);
   --color-verified-soft: var(--verified-soft);
-  --color-pending: var(--pending);
+  --color-cream: var(--cream);
 
   /* Fonts are self-hosted from npm packages (imported in layout.tsx) */
-  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Cinzel Decorative", "Didot", "Bodoni 72", serif; /* titles, labels */
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif; /* paragraphs */
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace; /* the agent trace */
+
+  /* Easing curves (same values as src/lib/motion.ts), used as
+     ease-out-strong / ease-in-out-strong classes */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* The marquee: slide left by exactly one copy of the content, forever */
+  --animate-marquee: marquee 38s linear infinite;
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 html {
@@ -68,7 +81,7 @@ body {
 
 /* Visible keyboard focus everywhere (accessibility) */
 :focus-visible {
-  outline: 2px solid var(--verified);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -82,6 +95,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
